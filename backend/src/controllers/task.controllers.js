@@ -1,19 +1,19 @@
-import express from 'express';
+import express from "express";
 
-import Task from '../models/task.models.js';
+import Task from "../models/task.models.js";
 
 // Create Task
 export const createTask = async (req, res) => {
-    try {
-        const {title,inputText,operation} = req.body;
-       if (!title || !inputText || !operation) {
+  try {
+    const { title, inputText, operation } = req.body;
+    if (!title || !inputText || !operation) {
       return res.status(400).json({
         success: false,
         message: "Please fill all fields",
       });
     }
 
-     // Validate operation
+    // Validate operation
     const allowedOperations = [
       "uppercase",
       "lowercase",
@@ -28,28 +28,27 @@ export const createTask = async (req, res) => {
       });
     }
 
-        const newTask = await Task.create({
+    const newTask = await Task.create({
       title,
       inputText,
       operation,
       createdBy: req.user.userId,
     });
 
-       return res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Task created successfully",
       task: newTask,
     });
-        
-    } catch (error) {
-        console.error("Create Task Error:", error);
+  } catch (error) {
+    console.error("Create Task Error:", error);
 
     return res.status(500).json({
       success: false,
       message: "Server error while creating task",
     });
-    }
-}
+  }
+};
 
 // Get All Tasks of Logged In User
 export const getAllTasks = async (req, res) => {
@@ -78,23 +77,59 @@ export const getAllTasks = async (req, res) => {
 
 // Get Single Task
 export const getTaskById = async (req, res) => {
-    try {
-        
-    } catch (error) {
-    //      console.error("get error by idr:", error);
+  try {
+    const { id } = req.params;
+    const userId = req.user.userId;
+    const response = await Task.findOne({
+      _id: id,
+      createdBy: req.user.userId,
+    });
 
-    // return res.status(500).json({
-    //   success: false,
-    //   message: "Server error while getting id  task",
-    // });
+    if (!response) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
     }
- }
+    return res.status(200).json({
+      success: true,
+      task: response,
+    });
+  } catch (error) {
+    console.error("get error by id :", error);
 
+    return res.status(500).json({
+      success: false,
+      message: "Server error while getting id  task",
+    });
+  }
+};
 
-
-
-// Delete Task (Optional)
-export const deleteTask = async (req, res) => {}
+// Delete Task
+export const deleteTask = async (req, res) => {
+  try {
+    const {id} = req.params
+    const response = await Task.deleteOne({
+      _id: id,
+      createdBy: req.user.userId,
+    });
+    if (!response) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Task deleted successfully",
+    });
+  } catch (error) {
+    console.log("Deleting task error", error);
+    return res.status(500).json({
+      message: "Server error during deleting task",
+    });
+  }
+};
 
 // Run Task (Redis Integration Later)
-export const runTask = async (req, res) => {}
+export const runTask = async (req, res) => {};
