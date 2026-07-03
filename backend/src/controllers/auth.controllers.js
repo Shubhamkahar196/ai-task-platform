@@ -62,9 +62,54 @@ export const login = async (req,res)=>{
     try {
         const parsedData = loginValidation.safeParse(req.body);
         if(!parsedData.success){
-            return res.status
+            return res.status(400).json({
+                message: "Invalid credentials"
+            })
         }
+
+        const {email,password} = parsedData.data;
+        // checking email
+        const user = await User.findOne({email})
+        if(!user) {
+            return res.status(404).json({
+                message: "User not regiserted"
+            })
+        }
+        // compared password
+        const matchedPassword = await bcrypt.compare(password,user.password);
+        if(!matchedPassword) {
+            return res.status(404).json({
+                message: "Password is wrong"
+            })
+        }
+
+        // generate token
+        const token = jwt.sign(
+            {userId:user._id},
+            process.env.JWT_SECRET,
+            {expiresIn: "7d"}
+        )
+
+       return res.status(200).json({
+      message: "Login successful",
+      token,
+      user: { id: user._id, name: user.name, email: user.email }
+    });
+
     } catch (error) {
         console.log("Login failed",error);
+         return res.status(500).json({ message: "Server error during login" });
+    }
+}
+
+
+// profile
+export const profile = async(req,res)=>{
+    try {
+        const {userId} = req.params;
+        const user = await User.findById(req.user.Id).select('-password');
+        return res.status(200).json(user);
+    } catch (error) {
+         return res.status(500).json({ message: "Server error fetching profile" });
     }
 }
