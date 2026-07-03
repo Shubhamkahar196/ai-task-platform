@@ -52,10 +52,44 @@ export const createTask = async (req, res) => {
 }
 
 // Get All Tasks of Logged In User
-export const getAllTasks = async (req, res) => {}
+export const getAllTasks = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const response = await Task.find({
+      createdBy: userId,
+    }).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: "Get all tasks successfully",
+      count: response.length,
+      tasks: response,
+    });
+  } catch (error) {
+    console.error("Getting all tasks error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server error while getting all tasks",
+    });
+  }
+};
 
 // Get Single Task
-export const getTaskById = async (req, res) => {}
+export const getTaskById = async (req, res) => {
+    try {
+        
+    } catch (error) {
+    //      console.error("get error by idr:", error);
+
+    // return res.status(500).json({
+    //   success: false,
+    //   message: "Server error while getting id  task",
+    // });
+    }
+ }
+
 
 
 
