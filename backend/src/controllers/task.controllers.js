@@ -137,5 +137,44 @@ export const deleteTask = async (req, res) => {
   }
 };
 
-// Run Task (Redis Integration Later)
-export const runTask = async (req, res) => {};
+
+export const runTask = async (req, res) => {
+  try {
+    const {id} = req.params;
+
+    const task = await Task.findOne({
+      _id: id,
+      createdBy: req.user.userId,
+    })
+
+    if(!task){
+      return res.status(404).json({
+        success:false,
+        message: "Task not found",
+      })
+    }
+
+    // reset status before sending to queue
+    task.status = "Pending";
+    task.result = "";
+    task.logs = "";
+    await task.save();
+
+    await addTaskToQueue({
+      taskId: task._id,
+      operation: task.operation,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Task submitted successfully",
+    });
+  } catch (error) {
+    console.error("Run Task Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server error while submitting task",
+    });
+  }
+};
