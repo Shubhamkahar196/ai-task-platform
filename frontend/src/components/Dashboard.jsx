@@ -115,7 +115,7 @@
 
 //   return (
 //     <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 text-gray-100">
-      
+
 //       {/* Header Banner */}
 //       <div className="mb-8 md:mb-12">
 //         <h1 className="text-2xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-white via-gray-200 to-[#A29BFE] bg-clip-text text-transparent">
@@ -128,7 +128,7 @@
 
 //       {/* Main Responsive Split Layout */}
 //       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
+
 //         {/* Left/Top Column: Create Task Action Panel */}
 //         <div className="lg:col-span-5 bg-[#131B2E] border border-gray-800 p-5 sm:p-6 rounded-2xl shadow-xl space-y-4 sticky top-24">
 //           <h2 className="text-lg font-bold tracking-tight text-[#A29BFE] mb-2 flex items-center gap-2">
@@ -241,10 +241,6 @@
 
 // export default Dashboard;
 
-
-
-
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -289,7 +285,7 @@ const Dashboard = () => {
         withCredentials: true,
       });
       console.log(res.data);
-      setTasks(res.data.response || []); // Safeguard against empty or unexpected array formats
+      setTasks(Array.isArray(res.data.tasks) ? res.data.tasks : []);
     } catch (error) {
       console.log(error);
     }
@@ -300,7 +296,7 @@ const Dashboard = () => {
       await axios.post(
         `${BASE_URL}/tasks/create`,
         { title, inputText, operation },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       alert("Task Created Successfully");
       await getAllTasks();
@@ -317,7 +313,7 @@ const Dashboard = () => {
       await axios.post(
         `${BASE_URL}/tasks/${id}/run`,
         {},
-        { withCredentials: true }
+        { withCredentials: true },
       );
       getAllTasks();
     } catch (err) {
@@ -339,18 +335,24 @@ const Dashboard = () => {
   // Status badge style helper
   const getStatusBadge = (status) => {
     switch (status?.toLowerCase()) {
-      case "completed":
+      case "success":
         return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+
+      case "running":
+        return "bg-blue-500/10 text-blue-400 border-blue-500/20";
+
       case "pending":
         return "bg-amber-500/10 text-amber-400 border-amber-500/20";
+
+      case "failed":
+        return "bg-red-500/10 text-red-400 border-red-500/20";
+
       default:
-        return "bg-blue-500/10 text-blue-400 border-blue-500/20";
+        return "bg-gray-500/10 text-gray-400 border-gray-500/20";
     }
   };
-
   return (
     <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 text-gray-100">
-      
       {/* Header Banner */}
       <div className="mb-8 md:mb-12">
         <h1 className="text-2xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-white via-gray-200 to-[#A29BFE] bg-clip-text text-transparent">
@@ -363,7 +365,6 @@ const Dashboard = () => {
 
       {/* Main Responsive Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
         {/* Left/Top Column: Create Task Action Panel */}
         <div className="lg:col-span-5 bg-[#131B2E] border border-gray-800 p-5 sm:p-6 rounded-2xl shadow-xl space-y-4 sticky top-24">
           <h2 className="text-lg font-bold tracking-tight text-[#A29BFE] mb-2 flex items-center gap-2">
@@ -372,7 +373,9 @@ const Dashboard = () => {
           </h2>
 
           <div className="space-y-1">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">Task Title</label>
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">
+              Task Title
+            </label>
             <input
               type="text"
               placeholder="e.g., Format JSON Output"
@@ -383,7 +386,9 @@ const Dashboard = () => {
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">Input Text</label>
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">
+              Input Text
+            </label>
             <textarea
               placeholder="Paste raw string data here..."
               value={inputText}
@@ -394,7 +399,9 @@ const Dashboard = () => {
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">Target Operation</label>
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider pl-1">
+              Target Operation
+            </label>
             <div className="relative">
               <select
                 value={operation}
@@ -407,8 +414,12 @@ const Dashboard = () => {
                 <option value="wordcount">Word Count</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
-                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                <svg
+                  className="fill-current h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                 </svg>
               </div>
             </div>
@@ -425,9 +436,7 @@ const Dashboard = () => {
         {/* Right/Bottom Column: Historic Task View Feed */}
         <div className="lg:col-span-7 space-y-4">
           <div className="flex items-center justify-between border-b border-gray-800 pb-3">
-            <h2 className="text-xl font-bold tracking-tight">
-              My Task Logs
-            </h2>
+            <h2 className="text-xl font-bold tracking-tight">My Task Logs</h2>
             <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-800 text-gray-400">
               {tasks.length} total
             </span>
@@ -435,7 +444,9 @@ const Dashboard = () => {
 
           {tasks.length === 0 ? (
             <div className="text-center py-16 bg-[#131B2E]/30 border border-dashed border-gray-800 rounded-2xl">
-              <p className="text-gray-500 text-sm">No tasks logged yet. Initiate an execution stack above.</p>
+              <p className="text-gray-500 text-sm">
+                No tasks logged yet. Initiate an execution stack above.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -447,29 +458,40 @@ const Dashboard = () => {
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2 mb-3">
-                      <h3 className="font-bold text-base text-white truncate max-w-[160px]" title={task.title}>
+                      <h3
+                        className="font-bold text-base text-white truncate max-w-[160px]"
+                        title={task.title}
+                      >
                         {task.title || "Untitled Operation"}
                       </h3>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border uppercase tracking-wider ${getStatusBadge(task.status)}`}>
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-md border uppercase tracking-wider ${getStatusBadge(task.status)}`}
+                      >
                         {task.status || "idle"}
                       </span>
                     </div>
 
                     <div className="space-y-2 mb-4">
                       <div>
-                        <span className="text-[10px] font-bold text-gray-500 uppercase block">Operation</span>
+                        <span className="text-[10px] font-bold text-gray-500 uppercase block">
+                          Operation
+                        </span>
                         <span className="text-xs font-mono text-gray-300 bg-[#0B0F19] px-2 py-0.5 rounded border border-gray-800 inline-block mt-0.5">
                           {task.operation}
                         </span>
                       </div>
 
                       <div>
-                        <span className="text-[10px] font-bold text-gray-500 uppercase block">Result</span>
-                        <p className={`text-xs mt-1 p-2 rounded-lg font-mono break-words ${
-                          task.result 
-                            ? "text-emerald-400 bg-emerald-950/20 border border-emerald-900/40" 
-                            : "text-gray-400 bg-[#0B0F19] border border-gray-800/60 italic"
-                        }`}>
+                        <span className="text-[10px] font-bold text-gray-500 uppercase block">
+                          Result
+                        </span>
+                        <p
+                          className={`text-xs mt-1 p-2 rounded-lg font-mono break-words ${
+                            task.result
+                              ? "text-emerald-400 bg-emerald-950/20 border border-emerald-900/40"
+                              : "text-gray-400 bg-[#0B0F19] border border-gray-800/60 italic"
+                          }`}
+                        >
                           {task.result || "No execution result recorded yet."}
                         </p>
                       </div>
@@ -495,11 +517,9 @@ const Dashboard = () => {
             </div>
           )}
         </div>
-
       </div>
     </div>
   );
 };
 
 export default Dashboard;
-
