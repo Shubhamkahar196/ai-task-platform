@@ -2,9 +2,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import connectDb from "./config/db.js";
+import {connectRedis} from "./config/redis.js";
 import app from "./app.js";
 
-connectDb();
+
+await connectDb();
+await connectRedis();
+
 
 const PORT = process.env.PORT || 5000;
 
