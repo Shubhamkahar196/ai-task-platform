@@ -1,14 +1,26 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./index.css";
+import Body from "./components/Body";
+import Login from "./components/Login";
+import Dashboard from "./components/Dashboard";
 
-import './index.css'
+import AuthProvider from "./context/AuthProvider";
 
 function App() {
-
-
   return (
-    <>
-    <h1 className="text-6xl">hiii</h1>
-      </>
-  )
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Body />}>
+            <Route index element={<Dashboard />} />
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
+
+

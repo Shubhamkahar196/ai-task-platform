@@ -6,8 +6,9 @@ import {connectRedis} from "./config/redis.js";
 import app from "./app.js";
 
 
-await connectDb();
+connectDb();
 await connectRedis();
+
 
 
 const PORT = process.env.PORT || 5000;
