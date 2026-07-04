@@ -109,7 +109,7 @@ export const getTaskById = async (req, res) => {
 export const deleteTask = async (req, res) => {
   try {
     const {id} = req.params
-    const response = await Task.deleteOne({
+    const response = await Task.findOneAndDelete({
       _id: id,
       createdBy: req.user.userId,
     });
