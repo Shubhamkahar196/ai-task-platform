@@ -4,6 +4,8 @@
 A full-stack AI Task Processing Platform that demonstrates asynchronous background job processing using **React, Node.js, Redis, Python Worker, Docker, and MongoDB Atlas**.
 
 The application allows authenticated users to create text-processing tasks, queue them in Redis, process them asynchronously using a Python worker, and view the live status and results from the dashboard.
+<img width="1907" height="927" alt="image" src="https://github.com/user-attachments/assets/5505f10d-357c-4191-a76b-e591ed4ea7fe" />
+
 
 ---
 
