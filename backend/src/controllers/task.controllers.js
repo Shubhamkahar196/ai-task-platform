@@ -1,6 +1,7 @@
 import express from "express";
 
 import Task from "../models/task.models.js";
+import { addTaskToQueue } from "../queue/task.queue.js";
 
 // Create Task
 export const createTask = async (req, res) => {
@@ -34,6 +35,11 @@ export const createTask = async (req, res) => {
       operation,
       createdBy: req.user.userId,
     });
+
+    await addTaskToQueue({
+      taskId: newTask._id,
+      operation: newTask.operation
+    })
 
     return res.status(201).json({
       success: true,
