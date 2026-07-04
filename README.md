@@ -1,3 +1,4 @@
+
 # AI Task Platform
 
 A full-stack AI Task Processing Platform that demonstrates asynchronous background job processing using **React, Node.js, Redis, Python Worker, Docker, and MongoDB Atlas**.
@@ -119,6 +120,14 @@ The worker currently supports the following operations:
 - Word Count
 
 ---
+
+# Screenshot
+
+
+<img width="1907" height="925" alt="i" src="https://github.com/user-attachments/assets/de781195-e5a6-4978-bf69-c1fa87128766" />
+<img width="1912" height="915" alt="2" src="https://github.com/user-attachments/assets/13f6c4c2-c025-4c01-9cb9-995115dcf821" />
+
+
 
 # Environment Variables
 
