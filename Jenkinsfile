@@ -54,13 +54,17 @@ pipeline{
                     )
                 ]){
                     sh '''
-                        echo "$DOCKERHUB_PASS" | docker login \
+                       echo "$DOCKERHUB_PASS" | docker login \
                         -u "$DOCKERHUB_USER" --password-stdin
 
-                        docker compose push backend frontend worker
+                       docker push "$DOCKER_USER/ai-task-backend:$IMAGE_TAG"
+                       docker push "$DOCKER_USER/ai-task-frontend:$IMAGE_TAG"
+                       docker push "$DOCKER_USER/ai-task-worker:$IMAGE_TAG"
 
-                        docker logout
-                    '''
+                      docker logout
+            '''
+
+                      
                     //  docker push "$DOCKER_USER/ai-task-platform:$IMAGE_TAG"
                 }
 
