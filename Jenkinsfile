@@ -3,6 +3,7 @@ pipeline{
     environment{
         DOCKER_USER='shubhamkah'
         IMAGE_TAG="latest"
+         DOCKER_HOST = 'tcp://docker:2375'
     }
 
     stages{
