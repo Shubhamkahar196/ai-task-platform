@@ -29,7 +29,8 @@ pipeline{
 
         stage('Build image'){
             steps{
-                  sh 'docker build -t $DOCKER_USER/ai-task-platform:$IMAGE_TAG .'
+                //   sh 'docker build -t $DOCKER_USER/ai-task-platform:$IMAGE_TAG .'
+                sh 'docker compose build'
             }
         }
 
@@ -56,10 +57,11 @@ pipeline{
                         echo "$DOCKERHUB_PASS" | docker login \
                         -u "$DOCKERHUB_USER" --password-stdin
 
-                        docker push "$DOCKER_USER/ai-task-platform:$IMAGE_TAG"
+                        docker compose push backend frontend worker
 
                         docker logout
                     '''
+                    //  docker push "$DOCKER_USER/ai-task-platform:$IMAGE_TAG"
                 }
 
             }
